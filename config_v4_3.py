@@ -10,7 +10,7 @@ tf.app.flags.DEFINE_integer("frames_per_clip", 64, "frames per clip")
 tf.app.flags.DEFINE_integer("batch_size", 1, "number of clips(max_sequence_length of an event for Transformer model)")
 tf.app.flags.DEFINE_integer("epochs", 20, "number of epochs")
 # tf.app.flags.DEFINE_integer("iterations", 200000, "iterations")
-tf.app.flags.DEFINE_float("learning_rate", 1e-2, "learning rate")
+tf.app.flags.DEFINE_float("learning_rate", 1e-3, "learning rate")
 tf.app.flags.DEFINE_float("gamma", 0.1, "learning rate decay factor")
 tf.app.flags.DEFINE_integer("lr_decay_step", 100000, "number of steps after which learning rate decays")
 tf.app.flags.DEFINE_integer("resize_short", 256, "short length of resized image")
@@ -24,7 +24,7 @@ tf.app.flags.DEFINE_string("ckpt_dir", "/media/pjh/2e8b4b6c-7754-4bf3-b610-7e527
 tf.app.flags.DEFINE_string("idx_path", None, "path for loading i3d-feature-sampling-indices")
 tf.app.flags.DEFINE_string("logs_dir", "/media/pjh/2e8b4b6c-7754-4bf3-b610-7e52704614af/dense-captioning/logs", "logs directory")
 tf.app.flags.DEFINE_string("results_dir", "/media/pjh/2e8b4b6c-7754-4bf3-b610-7e52704614af/dense-captioning/results", "results directory")
-tf.app.flags.DEFINE_string("writer_dir", "./tensorboard/i3d_transformer_{}_v{}".format(now.strftime('%Y-%m-%d'), '4_2'), "tensorboard writer directory")
+tf.app.flags.DEFINE_string("writer_dir", "./tensorboard/i3d_transformer_{}_v{}".format(now.strftime('%Y-%m-%d'), '4_3'), "tensorboard writer directory")
 
 # token config
 tf.app.flags.DEFINE_integer("PAD", 0, "index of PAD symbol")

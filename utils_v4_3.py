@@ -2,7 +2,7 @@ import numpy as np
 
 from nltk.translate.bleu_score import SmoothingFunction, sentence_bleu
 
-from config_v4_2 import FLAGS
+from config_v4_3 import FLAGS
 
 
 def count_parameters(model):

@@ -10,10 +10,10 @@ import torch.nn.functional as F
 import torch.utils.data as torchdata
 from torch.utils.tensorboard import SummaryWriter
 
-import utils_v4_2 as utils
-from data_loader_v4_2 import FrameDataset
-from model_v4_2 import I3D_Transformer
-from config_v4_2 import FLAGS
+import utils_v4_3 as utils
+from data_loader_v4_3 import FrameDataset
+from model_v4_3 import I3D_Transformer
+from config_v4_3 import FLAGS
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -70,7 +70,7 @@ optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 # criterion = nn.CrossEntropyLoss()
 criterion = nn.NLLLoss()
 
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=FLAGS.lr_decay_step, gamma=FLAGS.gamma)
+# scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=FLAGS.lr_decay_step, gamma=FLAGS.gamma)
 
 torch.save(model.get_idx(), os.path.join(ckpt_dir, 'idx_{}_.pt'.format(FLAGS.batch_size, FLAGS.batch_size, now.strftime('%Y-%m-%d'))))
 print(f'Model parameters : {utils.count_parameters(model):,}')
@@ -83,6 +83,7 @@ if phase == 'Train':
     if not i3d_finetuning:
         for param in model.i3d.parameters():
             param.requires_grad = False
+        model.eval()
 else:
     model.eval()
 
@@ -140,7 +141,7 @@ for epoch in range(epochs):
         train_loss += loss.item()
 
         display_interval = 100
-        saving_interval = 1000
+        saving_interval = 5000
         if global_step % display_interval == 0:
             with open(loss_file, "a") as f:
                 if global_step == 0:

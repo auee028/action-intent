@@ -13,7 +13,7 @@ import torchtext
 import torchvision
 from torch.utils.data import Dataset, DataLoader
 
-from config_v4_2 import FLAGS
+from config_v4_3 import FLAGS
 
 
 def file(json_file):
@@ -130,7 +130,7 @@ class FrameDataset(Dataset):
             cnt = x.shape[0]           # the number of frames of an event
             if (cnt < self.frames_per_clip):
                 x = np.vstack((x,
-                        np.ones((self.frames_per_clip - cnt, ) + frame_shape) * (-30000)))  # pad with -30000 to diminish training of PAD)
+                        np.zeros((self.frames_per_clip - cnt, ) + frame_shape)))  # pad with -30000 to diminish training of PAD)
             frames.append(x)
 
             sentences.append(self.get_tokenized_sentence(info['sentence']))

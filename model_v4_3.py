@@ -6,9 +6,9 @@ import time
 import torch
 import torch.nn as nn
 
-from i3d.i3d_v4_2 import I3D as FeatureExtractor
-import utils_v4_2 as utils
-from config_v4_2 import FLAGS
+from i3d.i3d_v4_3 import I3D as FeatureExtractor
+import utils_v4_3 as utils
+from config_v4_3 import FLAGS
 
 
 _CHECKPOINT_PATHS = {
@@ -173,7 +173,7 @@ class I3D_Transformer(nn.Module):
         trg_ = torch.LongTensor(trg_)[:,:-1].to(device)
         trg = self.embedding_layer(trg_)
 
-        trg[trg == FLAGS.PAD] = -30000
+        trg[trg == FLAGS.PAD] = 0
 
         dec_output = self.transformer(src, trg)      # src: (S, N, E) / tgt: (T, N, E) / output: (T, N, E)
         dec_output.transpose_(0, 1)  # output = torch.transpose(output, 0, 1)

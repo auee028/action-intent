@@ -1,7 +1,8 @@
-"""
+###
+
 Dense captioning with I3D+Transformer model
 
-"""
+###
 
 1. Dataset
     1) I3D feature extraction: ActivityNet 200 (activitynet_200.json file consists of 'database', 'taxonomy', 'version' -> 'database' annotation is used)

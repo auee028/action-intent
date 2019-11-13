@@ -1,15 +1,11 @@
-###
+### Dense captioning with I3D+Transformer model
 
-Dense captioning with I3D+Transformer model
-
-###
-
-1. Dataset
+# 1. Dataset
     1) I3D feature extraction: ActivityNet 200 (activitynet_200.json file consists of 'database', 'taxonomy', 'version' -> 'database' annotation is used)
     2) Transformer: ActivityNet Captions Dataset (train.json, val_1.json, val_2.json files)
 
 
-2. Structure
+# 2. Structure
 
  dense_captioning
     |--i3d
@@ -52,12 +48,12 @@ Dense captioning with I3D+Transformer model
     	|-- video		: a folder of .mp4 videos
     	|-- video_fraes		: a folder of extracted frames at fps=25 by event
 
-3. Usage
+# 3. Usage
     1) make_new_anno.py		: make new .json files(train_data_info.json, val_1_data_info.json, val_2_data_info.json). The files include annotation of {'vid event_idx': {'video':.., 'event_idx':.., 'timestamp':[start,end], 'sentence':..}, ...}
     2) save_video_frames.py	: save frames at fps=25 from .mp4 video files in 'video' folder to 'video_frames' folder by event (actually hard to use because of memory storage problem)
 
 
-4. Requirements
+# 4. Requirements
 python=3.6.1
 tensorflow=1.14
 tensorboard=1.14

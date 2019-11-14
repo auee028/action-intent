@@ -39,9 +39,6 @@
         |
         |__ save_sampled_frames.py			: save sampled frames as .npy from .mp4 videos
         |__ check_save_sampled_frames.py		: check if sampled frames are saved as .npy
-        |
-        |__ (get_frames_by_event.py)		: .py file to extract and save .jpeg frames from .mp4 videos
-        |__ (save_video_frames.py)			: failed because of scarse external memory space
 
      mydrive
         |--Dataset

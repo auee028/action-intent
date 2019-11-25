@@ -57,5 +57,4 @@
     pytorch=1.2
     nltk
 
-* ddddd
 

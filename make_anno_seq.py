@@ -63,8 +63,8 @@ def make_single_event_anno():
 
         new_anno[video_name] = contents
 
-    # with open("demo_annotation.json", "w") as f:
-    #     json.dump(new_anno, f)
+    with open("./annotations/demo_annotation.json", "w") as f:
+        json.dump(new_anno, f)
     print(t)
 
 def rearrange_feats_dir():
@@ -116,7 +116,7 @@ def make_event_seq_anno(save_root, feats_dir, sentence_dir):
 
                         sentences = []
                         for n, event in enumerate(pick_events):
-                            np_feats = np.load(os.path.join(feats_dir, person, seq[n], event, event + '.npy'))
+                            # np_feats = np.load(os.path.join(feats_dir, person, seq[n], event, event + '.npy'))
                             # print(np_feats.shape)
                             # np.save(os.path.join(save_root, video_id, 'event-{}.npy'.format(n)), np_feats)
 
@@ -140,13 +140,13 @@ def make_event_seq_anno(save_root, feats_dir, sentence_dir):
             # if len(all_anno) == anno_len:
             #     break
 
-        with open('annotations/demo_seq_anno_tmp.json', 'w') as f:
+        with open('annotations/demo_seq_anno.json', 'w') as f:
             json.dump(all_anno, f)
 
         print(len(all_anno))
 
     except:
-        with open('annotations/demo_seq_anno_tmp.json', 'w') as f:
+        with open('annotations/demo_seq_anno.json', 'w') as f:
             json.dump(all_anno, f)
 
         print(len(all_anno))
@@ -223,21 +223,55 @@ def divide_dataset(anno_file):
             test_set[k] = v
     print(len(train_set), len(val_set), len(test_set))  # (9032, 1129, 1129)
 
-    # with open("annotations/train_demo.json", 'w') as f:
-    #     json.dump(train_set, f)
-    # with open("annotations/val_demo.json", 'w') as f:
-    #     json.dump(val_set, f)
-    # with open("annotations/test_demo.json", 'w') as f:
-    #     json.dump(test_set, f)
+    with open("annotations/train_demo.json", 'w') as f:
+        json.dump(train_set, f)
+    with open("annotations/val_demo.json", 'w') as f:
+        json.dump(val_set, f)
+    with open("annotations/test_demo.json", 'w') as f:
+        json.dump(test_set, f)
+
+def save_feats_seq(anno_file, feats_dir, save_root):
+    TYPE = anno_file.split('/')[-1].split('_demo')[0]
+    with open(anno_file, 'r') as f:
+        anno = json.load(f)
+
+    for v_id, info in tqdm.tqdm(anno.items()):
+        save_path = os.path.join(save_root, TYPE, v_id)
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+
+        for n, event in enumerate(info['orig_videos']):
+            np_feat = np.load(os.path.join(feats_dir, event, event+'.npy'))
+            np.save(os.path.join(save_path, 'event-{}.npy'.format(n)), np_feat)
 
 
 if __name__=="__main__":
+
     # rearrange_feats_dir()
 
+    # STEP 1
+    # make_single_event_anno()
+
+    # STEP 2
     # save_root = "/media/pjh/HDD2/Dataset/ces-demo-4th/demo_feats"
     # feats_dir = "/media/pjh/HDD2/Dataset/ces-demo-4th/feats"
     # sentence_dir = "/media/pjh/HDD2/Dataset/ces-demo-4th/annotations/anno_list"
     # make_event_seq_anno(save_root=save_root, feats_dir=feats_dir, sentence_dir=sentence_dir)
 
-    anno_file = "annotations/demo_seq_anno_tmp.json"
-    divide_dataset(anno_file=anno_file)
+    # STEP 3
+    # anno_file = "annotations/demo_seq_anno.json"
+    # divide_dataset(anno_file=anno_file)
+
+    # STEP 4
+    # anno_file = "annotations/{}_demo.json".format("test")       # train/val/test
+    # feats_dir = "/media/pjh/HDD2/Dataset/ces-demo-4th/tmp_feats"
+    # save_feats_seq(anno_file=anno_file, feats_dir=feats_dir, save_root=save_root)
+
+    # STEP 5 (for check)
+    with open("annotations/demo_seq_anno.json", 'r') as f:
+        jfile = json.load(f)
+    print(len(jfile))
+    l = {2:0, 3:0, 4:0}
+    for k, v in jfile.items():
+        l[len(v['sentences'])] += 1
+    print(l)

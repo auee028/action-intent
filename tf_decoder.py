@@ -21,7 +21,7 @@ def greedy_decoder(cell, embedding, initial_state, word_space_size,
         if not isinstance(outputs, tf.Tensor):
             raise TypeError("Expected outputs to be a single Tensor, got: %s" %
                             type(outputs))
-        sample_ids = tf.argmax(outputs, axis=-1, output_type=tf.int32)
+        sample_ids = tf.cast(tf.argmax(outputs, axis=-1), tf.int32)
 
         return sample_ids
 

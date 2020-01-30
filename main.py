@@ -4,6 +4,7 @@ import time
 import sys, os
 import json
 import collections
+import datetime
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
@@ -200,7 +201,7 @@ def eval_step(sess, ph, fetches, batcher):
 
     multi_dec_logits = sess.run(fetches, feed_dict=feed_dict)
 
-    return vid, duration, multi_timestamps, multi_dec_logits, multi_dec_target
+    return vid, multi_dec_logits, multi_dec_target
 
 def run(sess, ph, fetches, batcher, loss_list, score_list):
     # run training step
@@ -232,10 +233,16 @@ def train():
     llprint("Done!\n")
 
     # for log files
-    if not os.path.exists(FLAGS.logs_dir):
-        os.makedirs(FLAGS.logs_dir)
-    train_logs = os.path.join(FLAGS.logs_dir, 'DNC_train.txt')
-    val_logs = os.path.join(FLAGS.logs_dir, 'DNC_val.txt')
+    now = datetime.datetime.now()
+    logs_dir = os.path.join(FLAGS.logs_dir, now.strftime('%Y-%m-%d_%H-%M-%S'))
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir)
+    train_logs = os.path.join(logs_dir, 'DNC_train.txt')
+    val_logs = os.path.join(logs_dir, 'DNC_val.txt')
+    configs = os.path.join(logs_dir, 'configs.txt')
+
+    with open(configs, 'w') as f:
+        f.writelines(["lr : {}\n".format(FLAGS.learning_rate), "decay_step : {}\n".format(FLAGS.decay_step), "bs : {}\n".format(FLAGS.batch_size)])
 
     last_100_losses = []; last_100_scores = []
 
@@ -317,7 +324,7 @@ def train():
             if take_checkpoint:
                 llprint("\nSaving Checkpoint ... "),
                 # save
-                checkpoint_save_dir = checkpoint_dir.replace(os.path.basename(checkpoint_dir), 'step-{}'.format(start))
+                checkpoint_save_dir = checkpoint_dir.replace(os.path.basename(checkpoint_dir), 'step-{}'.format(start)).format(now.strftime('%Y-%m-%d_%H-%M-%S'))
 
                 if not os.path.exists(checkpoint_save_dir):
                     os.makedirs(checkpoint_save_dir)

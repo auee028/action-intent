@@ -60,9 +60,7 @@ def generate_eval_data(sess, ph, g, step_func,
 
     cnt = 0
     while (True):
-        vid, _, multi_timestamps, multi_dec_logits, multi_dec_target = step_func(sess, ph,
-                                                                                 fetches=g['multi_dec_logits'],
-                                                                                 batcher=batcher)
+        vid, multi_dec_logits, multi_dec_target = step_func(sess, ph, fetches=g['multi_dec_logits'], batcher=batcher)
         event_sentences = get_status(n_events=len(multi_dec_target),
                                      multi_dec_logits=multi_dec_logits, multi_dec_target=multi_dec_target, word2ix=word2ix)
 
@@ -71,7 +69,6 @@ def generate_eval_data(sess, ph, g, step_func,
         llprint('[test #{}] : {}\n'.format(cnt, vid))
 
         for ix, (gold, hypo) in enumerate(zip(event_sentences['gold'], event_sentences['hypo'])):
-            _start, _end = multi_timestamps[ix][0], multi_timestamps[ix][1]
             gold = gold.encode('utf-8')
             hypo = hypo.encode('utf-8')
 
@@ -81,7 +78,7 @@ def generate_eval_data(sess, ph, g, step_func,
             datasetGold['annotations'].append(dict(sentence_id=vid + ':' + str(ix), caption=gold))
             datasetHypo['annotations'].append(dict(sentence_id=vid + ':' + str(ix), caption=hypo))
 
-            llprint(u"\tEvent : {} \t [time] : {}-{}\n".format(ix, _start, _end))
+            llprint(u"\tEvent : {}\n".format(ix))
             llprint("\t[gold] : {}\n".format(gold))
             llprint("\t[hypo] : {}\n".format(hypo))
 

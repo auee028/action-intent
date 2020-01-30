@@ -181,7 +181,7 @@ class FeatsBatcher:
             return word2ix
         '''
         print('Loading vocab ...')
-        with open(self.json_path, 'r') as f:
+        with open('word2ix.json', 'r') as f:
             word2ix = json.load(f)
         return word2ix
 

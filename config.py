@@ -20,7 +20,7 @@ tf.app.flags.DEFINE_bool("with_context", True, "consider context or not")
 
 tf.app.flags.DEFINE_integer("height", 112, "height of a frame")
 tf.app.flags.DEFINE_integer("width", 112, "width of a frame")
-tf.app.flags.DEFINE_integer("decay_step", 1000, "learning rate decay step")
+tf.app.flags.DEFINE_integer("lr_decay_step", 60000, "learning rate decay step")
 tf.app.flags.DEFINE_integer("iterations", 1000000, "number of iterations for training")
 tf.app.flags.DEFINE_integer("start", 0, "number of iterations for training")
 tf.app.flags.DEFINE_integer("stage", None, "stage index")
@@ -36,13 +36,13 @@ tf.app.flags.DEFINE_integer("UNK", 3, "index of UNK symbol")
 # path
 # tf.app.flags.DEFINE_string("mean_file", 'train01_16_128_171_mean.npy', "path to mean file from sports1m dataset")
 # tf.app.flags.DEFINE_string("video_prefix", '/mnt/hdd1/Dataset/Dense_VTT/video_resize', "prefix of video")
-tf.app.flags.DEFINE_string("feats_home", '/media/pjh/HDD2/Dataset/ces-demo-4th/demo_feats', "feats home dir")
+tf.app.flags.DEFINE_string("feats_home", '/media/pjh/HDD2/Dataset/ces-demo-4th/demo_feats_balanced', "feats home dir")
 tf.app.flags.DEFINE_string("pretrained_dir", '/media/pjh/2e8b4b6c-7754-4bf3-b610-7e52704614af/SourceCodes/Dense_VTT/ckpt_repos/with_context_dnc_sports1m/step-60054', "pretrained weights directory")
-tf.app.flags.DEFINE_string("checkpoint_dir", '/media/pjh/HDD2/Dataset/ces-demo-4th/ckpt/{}/step-last', "checkpoint directory")
+tf.app.flags.DEFINE_string("checkpoint_dir", '/media/pjh/HDD2/Dataset/ces-demo-4th/ckpt/2020-02-02_16-54-47/step-54192', "checkpoint directory")
 tf.app.flags.DEFINE_string("logs_dir", './logs', "logs directory")
 
 # mode
-tf.app.flags.DEFINE_string("mode", "train", "support 'train/eval/demo' mode")
+tf.app.flags.DEFINE_string("mode", "eval", "support 'train/eval/demo' mode")
 
 # for feature extraction
 tf.app.flags.DEFINE_string("type", "train", "train/val/test")

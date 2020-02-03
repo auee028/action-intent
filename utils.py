@@ -61,6 +61,9 @@ def generate_eval_data(sess, ph, g, step_func,
     cnt = 0
     while (True):
         vid, multi_dec_logits, multi_dec_target = step_func(sess, ph, fetches=g['multi_dec_logits'], batcher=batcher)
+
+        calc_bleu(multi_dec_logits, multi_dec_target, word2ix)
+
         event_sentences = get_status(n_events=len(multi_dec_target),
                                      multi_dec_logits=multi_dec_logits, multi_dec_target=multi_dec_target, word2ix=word2ix)
 

@@ -129,8 +129,14 @@ def build_train_graph():
     tot_loss = tf.reduce_sum(crss_entropy_loss)/(tf.reduce_sum(mask)+1e-12)
 
     global_step = tf.Variable(0, trainable=False)
+    # learning rate decay
+    starter_learning_rate = FLAGS.learning_rate # 0.1
+    decay_steps = FLAGS.lr_decay_step
+    decay_rate = 0.95
+    learning_rate = tf.train.exponential_decay(starter_learning_rate, global_step, decay_steps, decay_rate,
+                                               staircase=True)  # decay every decay_steps steps with a base of decay_rate
 
-    optimizer = tf.train.AdamOptimizer(learning_rate=FLAGS.learning_rate)
+    optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
     gradients, variables = zip(*optimizer.compute_gradients(tot_loss))
     gradients, _ = tf.clip_by_global_norm(gradients, 5.0)
 
@@ -242,7 +248,11 @@ def train():
     configs = os.path.join(logs_dir, 'configs.txt')
 
     with open(configs, 'w') as f:
-        f.writelines(["lr : {}\n".format(FLAGS.learning_rate), "decay_step : {}\n".format(FLAGS.decay_step), "bs : {}\n".format(FLAGS.batch_size)])
+        f.writelines(["lr : {}\n".format(FLAGS.learning_rate),
+                      "lr_decay_step : {}\n".format(FLAGS.lr_decay_step),
+                      "bs : {}\n\n".format(FLAGS.batch_size),
+                      "feats_dir : {}\n".format(FLAGS.feats_home),
+                      "anno_dir : {}\n".format("annotations/train_demo_balanced.json")])
 
     last_100_losses = []; last_100_scores = []
 
@@ -336,7 +346,7 @@ def train():
         except KeyboardInterrupt:
             llprint("\nSaving Checkpoint ... "),
             # save
-            checkpoint_save_dir = checkpoint_dir.replace(os.path.basename(checkpoint_dir), 'step-last')
+            checkpoint_save_dir = checkpoint_dir.replace(os.path.basename(checkpoint_dir), 'step-last').format(now.strftime('%Y-%m-%d_%H-%M-%S'))
 
             if not os.path.exists(checkpoint_save_dir):
                 os.makedirs(checkpoint_save_dir)
@@ -354,16 +364,19 @@ def eval():
     # generate data for evaluation
     datasetGold, datasetHypo = generate_eval_data(sess, ph, g, step_func=eval_step, batcher=valid_batcher, word2ix=word2ix)
 
+    ckpt = FLAGS.checkpoint_dir.split('/')[-2]
+
     if FLAGS.with_context:
-        result_dir = './results_with_context'
+        result_dir = './results_with_context/{}'.format(ckpt)
     else:
-        result_dir = './results_no_context'
+        result_dir = './results_no_context/{}'.format(ckpt)
 
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
-    json.dump(datasetGold, file(os.path.join(result_dir,'gold_val-{}.json').format(step_num), 'wb'))
-    json.dump(datasetHypo, file(os.path.join(result_dir,'hypo_val-{}.json').format(step_num), 'wb'))
+    json.dump(datasetGold, file(os.path.join(result_dir,'gold_train-{}.json').format(step_num), 'wb'))
+    json.dump(datasetHypo, file(os.path.join(result_dir,'hypo_train-{}.json').format(step_num), 'wb'))
+
 
 def demo():
     # build and restore computation graph on test phase

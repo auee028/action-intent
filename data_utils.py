@@ -146,7 +146,7 @@ class FeatsBatcher:
         self.feats_dir = os.path.join(FLAGS.feats_home, type)
         self.annotation_prefix = annotation_prefix
         self.batch_size = batch_size
-        self.json_path = os.path.join(annotation_prefix, type+'_demo.json')
+        self.json_path = os.path.join(annotation_prefix, type+'_demo_balanced.json')
         self.word2ix = self.create_vocab()
         self.data = collections.OrderedDict(json.load(file(self.json_path))).items()
         random.shuffle(self.data)
@@ -216,7 +216,7 @@ class FeatsBatcher:
                 self.data = collections.OrderedDict(shuffled).items()
             self.start = 0
             self.epoch += 1
-            print 'End of Epoch... Shuffle !!'
+            print('\nEnd of Epoch... Shuffle !!')
 
         cur_batch = self.Batch(vid=[], feats=[], sentences=[], word_id=[])
         start = self.start# if self.type=='train' else np.random.randint(len(self.data)-self.batch_size)

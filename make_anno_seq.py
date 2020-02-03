@@ -13,7 +13,7 @@ frames_root = "/media/pjh/HDD2/Dataset/ces-demo-4th/frames"
 feats_root = "/media/pjh/HDD2/Dataset/ces-demo-4th/tmp_feats"
 
 anno_list = "/media/pjh/HDD2/Dataset/ces-demo-4th/annotations/anno_list/{}.txt"
-event_seq_list = "/media/pjh/HDD2/Dataset/ces-demo-4th/annotations/event_seq.txt"
+event_seq_list = "/media/pjh/HDD2/Dataset/ces-demo-4th/annotations/event_seq_balanced.txt"
 
 def make_single_event_anno():
     # for dividing type(train/test)
@@ -91,7 +91,7 @@ def make_event_seq_anno(save_root, feats_dir, sentence_dir):
     anno_len = 0
     tmp_seq = []
     try:
-        for _ in range(10):
+        for _ in range(30):
             for seq_id, seq in enumerate(seqs):
                 seq = seq.strip().split('-')
 
@@ -140,13 +140,13 @@ def make_event_seq_anno(save_root, feats_dir, sentence_dir):
             # if len(all_anno) == anno_len:
             #     break
 
-        with open('annotations/demo_seq_anno.json', 'w') as f:
+        with open('annotations/demo_seq_anno_balanced.json', 'w') as f:
             json.dump(all_anno, f)
 
         print(len(all_anno))
 
     except:
-        with open('annotations/demo_seq_anno.json', 'w') as f:
+        with open('annotations/demo_seq_anno_balanced.json', 'w') as f:
             json.dump(all_anno, f)
 
         print(len(all_anno))
@@ -223,11 +223,11 @@ def divide_dataset(anno_file):
             test_set[k] = v
     print(len(train_set), len(val_set), len(test_set))  # (9032, 1129, 1129)
 
-    with open("annotations/train_demo.json", 'w') as f:
+    with open("annotations/train_demo_balanced.json", 'w') as f:
         json.dump(train_set, f)
-    with open("annotations/val_demo.json", 'w') as f:
+    with open("annotations/val_demo_balanced.json", 'w') as f:
         json.dump(val_set, f)
-    with open("annotations/test_demo.json", 'w') as f:
+    with open("annotations/test_demo_balanced.json", 'w') as f:
         json.dump(test_set, f)
 
 def save_feats_seq(anno_file, feats_dir, save_root):
@@ -259,19 +259,21 @@ if __name__=="__main__":
     # make_event_seq_anno(save_root=save_root, feats_dir=feats_dir, sentence_dir=sentence_dir)
 
     # STEP 3
-    # anno_file = "annotations/demo_seq_anno.json"
+    # anno_file = "annotations/demo_seq_anno_balanced.json"
     # divide_dataset(anno_file=anno_file)
 
     # STEP 4
-    # anno_file = "annotations/{}_demo.json".format("test")       # train/val/test
-    # feats_dir = "/media/pjh/HDD2/Dataset/ces-demo-4th/tmp_feats"
-    # save_feats_seq(anno_file=anno_file, feats_dir=feats_dir, save_root=save_root)
+    save_root = "/media/pjh/HDD2/Dataset/ces-demo-4th/demo_feats_{}".format("balanced")
+    # anno_file = "annotations/{}_demo.json".format("test")  # train/val/test
+    anno_file = "annotations/{}_demo_{}.json".format("test", "balanced")       # train/val/test
+    feats_dir = "/media/pjh/HDD2/Dataset/ces-demo-4th/tmp_feats"
+    save_feats_seq(anno_file=anno_file, feats_dir=feats_dir, save_root=save_root)
 
     # STEP 5 (for check)
-    with open("annotations/demo_seq_anno.json", 'r') as f:
-        jfile = json.load(f)
-    print(len(jfile))
-    l = {2:0, 3:0, 4:0}
-    for k, v in jfile.items():
-        l[len(v['sentences'])] += 1
-    print(l)
+    # with open("annotations/demo_seq_anno_balanced.json", 'r') as f:
+    #     jfile = json.load(f)
+    # print(len(jfile))
+    # l = {2:0, 3:0, 4:0}
+    # for k, v in jfile.items():
+    #     l[len(v['sentences'])] += 1
+    # print(l)

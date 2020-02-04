@@ -24,6 +24,7 @@ CROP_SIZE = 112
 # Define batchers
 train_batcher = FeatsBatcher(type='train')
 valid_batcher = FeatsBatcher(type='val')
+test_batcher = FeatsBatcher(type=FLAGS.type)
 
 # dict word->ix
 word2ix = json.load(file('word2ix.json'))
@@ -132,7 +133,7 @@ def build_train_graph():
     # learning rate decay
     starter_learning_rate = FLAGS.learning_rate # 0.1
     decay_steps = FLAGS.lr_decay_step
-    decay_rate = 0.95
+    decay_rate = FLAGS.lr_decay_rate
     learning_rate = tf.train.exponential_decay(starter_learning_rate, global_step, decay_steps, decay_rate,
                                                staircase=True)  # decay every decay_steps steps with a base of decay_rate
 
@@ -250,9 +251,10 @@ def train():
     with open(configs, 'w') as f:
         f.writelines(["lr : {}\n".format(FLAGS.learning_rate),
                       "lr_decay_step : {}\n".format(FLAGS.lr_decay_step),
+                      "lr_decay_rate : {}\n".format(FLAGS.lr_decay_rate),
                       "bs : {}\n\n".format(FLAGS.batch_size),
                       "feats_dir : {}\n".format(FLAGS.feats_home),
-                      "anno_dir : {}\n".format("annotations/train_demo_balanced.json")])
+                      "anno_dir : {}\n".format("annotations/train_demo_{}.json".format(FLAGS.feats_home.split('_')[-1]))])
 
     last_100_losses = []; last_100_scores = []
 
@@ -289,7 +291,7 @@ def train():
             llprint("\rIteration %d/%d" % (start, end))
 
             summerize = (start % (100) == 0)
-            take_checkpoint = (start % (len(train_batcher.data)/batch_size) == 0)
+            take_checkpoint = 5000 # (start % (len(train_batcher.data)/batch_size) == 0)
             validate = (start % 1000 == 0)
 
             # run training step
@@ -362,7 +364,7 @@ def eval():
     step_num = os.path.basename(checkpoint_dir).split('-')[1]
 
     # generate data for evaluation
-    datasetGold, datasetHypo = generate_eval_data(sess, ph, g, step_func=eval_step, batcher=valid_batcher, word2ix=word2ix)
+    datasetGold, datasetHypo = generate_eval_data(sess, ph, g, step_func=eval_step, batcher=test_batcher, word2ix=word2ix)
 
     ckpt = FLAGS.checkpoint_dir.split('/')[-2]
 
@@ -374,8 +376,8 @@ def eval():
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
-    json.dump(datasetGold, file(os.path.join(result_dir,'gold_train-{}.json').format(step_num), 'wb'))
-    json.dump(datasetHypo, file(os.path.join(result_dir,'hypo_train-{}.json').format(step_num), 'wb'))
+    json.dump(datasetGold, file(os.path.join(result_dir,'gold_{}-{}.json').format(FLAGS.type, step_num), 'wb'))
+    json.dump(datasetHypo, file(os.path.join(result_dir,'hypo_{}-{}.json').format(FLAGS.type, step_num), 'wb'))
 
 
 def demo():

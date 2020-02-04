@@ -58,11 +58,13 @@ def generate_eval_data(sess, ph, g, step_func,
     datasetGold = dict(annotations=[])
     datasetHypo = dict(annotations=[])
 
+    score_list = []
+
     cnt = 0
     while (True):
         vid, multi_dec_logits, multi_dec_target = step_func(sess, ph, fetches=g['multi_dec_logits'], batcher=batcher)
 
-        calc_bleu(multi_dec_logits, multi_dec_target, word2ix)
+        score_list.append(calc_bleu(multi_dec_logits, multi_dec_target, word2ix))
 
         event_sentences = get_status(n_events=len(multi_dec_target),
                                      multi_dec_logits=multi_dec_logits, multi_dec_target=multi_dec_target, word2ix=word2ix)
@@ -88,6 +90,8 @@ def generate_eval_data(sess, ph, g, step_func,
         if batcher.epoch > 0:
             # if end of batch, then break loop!
             break
+
+    print("Avg. BLEU : {}".format(sum(score_list)/float(len(score_list))))
 
     return datasetGold, datasetHypo
 

@@ -247,28 +247,31 @@ if __name__=="__main__":
     # make_single_event_anno()
     # rearrange_feats_dir()
 
-    # STEP 1
-    save_file = 'annotations/demo_seq_anno_{}.json'.format("case1")
-    feats_dir = "/media/pjh/HDD2/Dataset/ces-demo-4th/feats"
-    sentence_dir = "/media/pjh/HDD2/Dataset/ces-demo-4th/annotations/anno_list"
-    make_event_seq_anno(save_file=save_file, feats_dir=feats_dir, sentence_dir=sentence_dir)
+    version = "case1"
+
+    # # STEP 1
+    # save_file = 'annotations/demo_seq_anno_{}.json'.format(version)
+    # feats_dir = "/media/pjh/HDD2/Dataset/ces-demo-4th/feats"
+    # sentence_dir = "/media/pjh/HDD2/Dataset/ces-demo-4th/annotations/anno_list"
+    # make_event_seq_anno(save_file=save_file, feats_dir=feats_dir, sentence_dir=sentence_dir)
 
     # # STEP 2
-    # anno_file = "annotations/demo_seq_anno_{}.json".format("single")
+    # anno_file = "annotations/demo_seq_anno_{}.json".format(version)
     # divide_dataset(anno_file=anno_file)
 
     # # STEP 3
-    # save_root = "/media/pjh/HDD2/Dataset/ces-demo-4th/demo_feats_{}".format("single")
+    # save_root = "/media/pjh/HDD2/Dataset/ces-demo-4th/demo_feats_{}".format(version)
     # # anno_file = "annotations/{}_demo.json".format("test")  # train/val/test
-    # anno_file = "annotations/{}_demo_{}.json".format("test", "single")       # train/val/test
-    # feats_dir = "/media/pjh/HDD2/Dataset/ces-demo-4th/tmp_feats"
-    # save_feats_seq(anno_file=anno_file, feats_dir=feats_dir, save_root=save_root)
+    # for tp in ["train", "val", "test"]:
+    #     anno_file = "annotations/{}_demo_{}.json".format(tp, version)
+    #     feats_dir = "/media/pjh/HDD2/Dataset/ces-demo-4th/tmp_feats"
+    #     save_feats_seq(anno_file=anno_file, feats_dir=feats_dir, save_root=save_root)
 
-    # # STEP 4 (for check)
-    # with open("annotations/demo_seq_anno_{}.json".format("single"), 'r') as f:
-    #     jfile = json.load(f)
-    # print(len(jfile))
-    # l = {1:0, 2:0, 3:0, 4:0}
-    # for k, v in jfile.items():
-    #     l[len(v['sentences'])] += 1
-    # print(l)
+    # STEP 4 (for check)
+    with open("annotations/demo_seq_anno_{}.json".format("single"), 'r') as f:
+        jfile = json.load(f)
+    print(len(jfile))
+    l = {1:0, 2:0, 3:0, 4:0}
+    for k, v in jfile.items():
+        l[len(v['sentences'])] += 1
+    print(l)

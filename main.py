@@ -291,7 +291,7 @@ def train():
             llprint("\rIteration %d/%d" % (start, end))
 
             summerize = (start % (100) == 0)
-            take_checkpoint = 5000 # (start % (len(train_batcher.data)/batch_size) == 0)
+            take_checkpoint = (start % 5000 == 0) # (start % (len(train_batcher.data)/batch_size) == 0)
             validate = (start % 1000 == 0)
 
             # run training step
@@ -355,6 +355,12 @@ def train():
 
             tf.train.Saver(tf.trainable_variables()).save(sess, os.path.join(checkpoint_save_dir, 'model.ckpt'))
             llprint("Done!\n")
+
+            time_info = "\nTime for training: {:.4f} hours".format((time.time() - start_time_100)/60/60)
+            print(time_info)
+            with open(configs, 'a') as f:
+                f.write(time_info)
+
             sys.exit(0)
 
 def eval():

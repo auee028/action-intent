@@ -146,7 +146,7 @@ class FeatsBatcher:
         self.feats_dir = os.path.join(FLAGS.feats_home, type)
         self.annotation_prefix = annotation_prefix
         self.batch_size = batch_size
-        self.json_path = os.path.join(annotation_prefix, type+'_demo_balanced.json')
+        self.json_path = os.path.join(annotation_prefix, type+'_demo_{}.json'.format(FLAGS.feats_home.split('_')[-1]))
         self.word2ix = self.create_vocab()
         self.data = collections.OrderedDict(json.load(file(self.json_path))).items()
         random.shuffle(self.data)

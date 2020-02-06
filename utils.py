@@ -91,7 +91,7 @@ def generate_eval_data(sess, ph, g, step_func,
             # if end of batch, then break loop!
             break
 
-    print("Avg. BLEU : {}".format(sum(score_list)/float(len(score_list))))
+    print("\nAvg. BLEU : {}".format(sum(score_list)/float(len(score_list))))
 
     return datasetGold, datasetHypo
 

@@ -38,15 +38,16 @@ tf.app.flags.DEFINE_integer("UNK", 3, "index of UNK symbol")
 # tf.app.flags.DEFINE_string("mean_file", 'train01_16_128_171_mean.npy', "path to mean file from sports1m dataset")
 # tf.app.flags.DEFINE_string("video_prefix", '/mnt/hdd1/Dataset/Dense_VTT/video_resize', "prefix of video")
 tf.app.flags.DEFINE_string("feats_home", '/media/pjh/HDD2/Dataset/ces-demo-4th/demo_feats_{}'.format('case1'), "feats home dir")
-tf.app.flags.DEFINE_string("pretrained_dir", '/media/pjh/2e8b4b6c-7754-4bf3-b610-7e52704614af/SourceCodes/Dense_VTT/ckpt_repos/with_context_dnc_sports1m/step-60054', "pretrained weights directory")
-tf.app.flags.DEFINE_string("checkpoint_dir", '/media/pjh/HDD2/Dataset/ces-demo-4th/ckpt/{}/step-last', "checkpoint directory")
+# tf.app.flags.DEFINE_string("pretrained_dir", '/media/pjh/2e8b4b6c-7754-4bf3-b610-7e52704614af/SourceCodes/Dense_VTT/ckpt_repos/with_context_dnc_sports1m/step-60054', "pretrained weights directory")
+tf.app.flags.DEFINE_string("pretrained_dir", None, "pretrained dir")
+tf.app.flags.DEFINE_string("checkpoint_dir", '/media/pjh/HDD2/Dataset/ces-demo-4th/ckpt/2020-02-04_20-58-54/step-100000', "checkpoint directory")
 tf.app.flags.DEFINE_string("logs_dir", './logs', "logs directory")
 
 # mode
-tf.app.flags.DEFINE_string("mode", "train", "support 'train/eval/demo' mode")
+tf.app.flags.DEFINE_string("mode", "eval", "support 'train/eval/demo' mode")
 
 # for feature extraction
-tf.app.flags.DEFINE_string("type", "train", "train/val/test")
+tf.app.flags.DEFINE_string("type", "val", "train/val/test")
 # tf.app.flags.DEFINE_string("dir", None, "features target directory")
 
 FLAGS = tf.app.flags.FLAGS

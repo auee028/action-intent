@@ -1,0 +1,110 @@
+import cv2
+import numpy as np
+import os, sys
+from optical_flow import detect_motion
+
+# grpc things
+from pbs import vintent_pb2, vintent_pb2_grpc
+import grpc
+import uuid
+import requests
+import sys
+
+class Client:
+    def __init__(self, ip, port):
+        self.ip = ip
+        self.port = port
+        self.cap = cv2.VideoCapture(int(sys.argv[1]))
+        self.cap.set(cv2.CAP_PROP_FPS, 15)
+        self.cap.set(cv2.CAP_PROP_AUTOFOCUS, False)
+        self.object_hist = []
+
+        self.cnt = 0
+
+    def generateRequests(self, frame, init):
+        frame = frame.tobytes()
+        yield vintent_pb2.MsgRequest(frame=frame, token=str(uuid.uuid4()), init=init)
+
+    def send(self, frame, init):
+        channel = grpc.insecure_channel('{}:{}'.format(self.ip, self.port))
+        stub = vintent_pb2_grpc.GreeterStub(channel)
+        response = stub.Analyze(self.generateRequests(frame, init))
+        return response
+
+    def run(self):
+        # if detect_motion(self.cap):
+        for _ in range(64):
+            ret, frame = self.cap.read()
+            frame = cv2.flip(frame, 1)
+
+            # response from server
+            response = self.send(frame,False)
+
+            roi_frame = np.frombuffer(response.result_frame, dtype=np.uint8).reshape(response.height, response.width, 3)
+
+            cv2.imshow('rgb', roi_frame)
+            cv2.waitKey(1)
+
+            if response.action!='None' and response.action_confidence>0.3:
+                self.object_hist.append(response.object)
+                break
+
+        return response
+
+        # else:
+        #     height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        #     width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        #     zero_frame = np.zeros([height,width,3], dtype=np.uint8)
+        #
+        #     # init LSTM state...
+        #     self.send(zero_frame,True)
+        #     return vintent_pb2.MsgReply(action='None',
+        #                                intent='None')
+
+
+if __name__=='__main__':
+    from collections import Counter
+    client = Client(ip="localhost", port=50052)
+    hist = []
+    while True:
+        response = client.run()
+        top_object_counter = Counter(client.object_hist).most_common(1)
+        tmp_action = response.action
+        tmp_intent = response.intent
+        if top_object_counter:
+            top_object = top_object_counter[0][0]
+            if (top_object == 'pizza' or top_object == 'banana' or top_object == 'orange') and (response.action.startswith('eating') or response.action.startswith('tasting')):
+                tmp_action = 'eating' + ' ' + top_object
+            #elif (top_object == 'cup' or top_object == 'bottle') and (response.action.startswith('drinking') or response.action.startswith('tasting')):
+                #tmp_action = 'tasting' + ' ' + 'coffee with' + ' ' + top_object
+                #tmp_intent = 'drinking coffee'
+            #elif top_object == 'cell phone' and not (response.action.startswith('eating') or response.action.startswith('drinking')):
+            #    tmp_action = 'using cell phone'
+            #    tmp_intent = 'searching for something on the internet'
+            elif response.action.startswith('reading'):
+                tmp_action = 'reading book'
+        if tmp_action=='fixing hair':
+            tmp_action = "do one's hair"
+        if tmp_action=='reading newspaper':
+            tmp_action = 'reading book'
+        if tmp_action=='drinking beer' or tmp_action=='drinking shots':
+            tmp_action = 'drinking'
+
+
+        # capitalize
+        tmp_action = tmp_action.capitalize()
+        tmp_intent = tmp_intent.capitalize()
+        
+        try:
+            # send action label
+            requests.get('http://192.168.10.5:3001/api/v1/actions/action/{}/{}'.format('home', tmp_action))
+            if hist:
+                prev_intent=hist[-1]
+                if prev_intent!='None' and tmp_intent!='None' and prev_intent != tmp_intent:
+                    requests.get('http://192.168.10.5:3001/api/v1/actions/intent/{}/{}'.format('home', tmp_intent))
+                    hist = []
+        except:
+            pass
+        print(tmp_action, tmp_intent)
+        hist.append(tmp_intent)
+        client.object_hist = []         # init object_hist

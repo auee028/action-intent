@@ -1,0 +1,150 @@
+<html>
+
+
+
+<head>
+    <title>Intention Demo</title>
+    <META HTTP-EQUIV="refresh" CONTENT="15">
+
+    <style type="text/css">
+        .left_region {
+            float:left; width:640px; height:480px;}
+        .right_region {
+            float:right; width:900px; height:480px; margin: 0px auto}
+
+        table.type11 {
+        border-collapse: separate;
+        border-spacing: 1px;
+        text-align: center;
+        line-height: 1.5;
+        margin: 20px 10px;
+        }
+        table.type11 th {
+            width: 320px;
+            padding: 10px;
+            font-weight: bold;
+            vertical-align: top;
+            color: #fff;
+            font-family: "Courier New", Courier, monospace; font-size:30px;
+            background: #ce4869 ;
+        }
+        table.type11 td {
+            width: 320px;
+            padding: 10px;
+            vertical-align: top;
+            border-bottom: 1px solid #ccc;
+            font-family: "Courier New", Courier, monospace; font-size:25px;
+            background: #eee;
+        }
+        h1 {
+            font-size: 50px;
+        }
+    </style>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $(
+        function update_action(){
+            $.getJSON('/state/get/action', function (res) {
+                $("#action_status").text(res.action);
+                setTimeout(function(){update_action();},500);
+            });
+        }
+        );
+
+        $(
+        function update_intent() {
+          $.getJSON('/state/get/intent', function (res) {
+              $("#intent_status").text(res.intent);
+              setTimeout(function () {
+                  update_intent();
+              }, 500);
+          })
+        }
+        );
+
+        var {pos,val, i, isChange} = {};
+        var data_points = [];
+
+        $(
+        function draw_chart(){
+           $.getJSON('/state/get/intent_panel', function (res) {
+                pos = res.labels;
+                val = res.probs;
+                isChange = res.isChange;
+
+                for(i=0;i<pos.length;i++){
+                    data_points[i] = {y:val[i], label:pos[i]};
+                }
+
+                chart = new CanvasJS.Chart("chartContainer", {
+                animationEnabled: false,
+                theme: "light2", // "light1", "light2", "dark1", "dark2"
+                axisY:{
+                    minimum: 0,
+                    maximum: 1
+                },
+                axisX:{
+                    labelFontSize: 28
+                },
+                data: [{
+                    type: "column",
+                    name: "intent_probs",
+                    axisYType: "secondary",
+                    dataPoints: data_points,
+                }]
+                });
+
+                chart.render();
+                delete chart;
+                data_points = [];
+
+                setTimeout(function () {
+                    draw_chart();
+                }, 500)
+           })
+           }
+        )
+
+    </script>
+
+
+</head>
+
+<body>
+     <div class="left_region">
+         <b>
+             <h1 align="center">Live Cam</h1>
+         </b>
+         <img src="{{ url_for('live_cam') }}">
+         <table class="type11">
+            <thead>
+            <tr>
+                <th scope="cols">Action</th>
+                <th scope="cols">Intent</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td id="action_status"></th>
+                <td id="intent_status"></th>
+            </tr>
+            </tbody>
+        </table>
+     </div>
+
+
+
+     <div class="right_region">
+         <b>
+             <h1 align="center">Top-3 Intentions</h1>
+             <div id="chartContainer" style="height: 480px; width: 100%; margin: 0 auto" align="right"></div>
+             <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+         </b>
+     </div>
+
+
+</body>
+
+</html>

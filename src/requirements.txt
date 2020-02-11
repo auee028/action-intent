@@ -45,7 +45,7 @@ moviepy==0.2.3.4
 msgpack-python==0.5.6
 munch==2.3.1
 natsort==5.1.1
-nltk==3.2.5
+nltk==3.4.5
 numpy==1.13.3
 opencv-python==3.4.0.12
 pandas==0.22.0

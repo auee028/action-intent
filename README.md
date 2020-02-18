@@ -4,11 +4,13 @@
 Python : 2.7.12, CUDA : 8.x, CuDNN : 5.1.10
 
 ## Installation
-Download C3D and I3D pretrained models from github repositories, locate 'i3d.py' under the '/origin' and 'optical_flow.py'(opencv samples, https://github.com/opencv/opencv) under the '/origin' and 'intent_tf_local', and set the paths in the codes.
+Download C3D and I3D codes from github repositories, locate 'i3d.py' under the '/origin' and 'optical_flow.py'(opencv samples, https://github.com/opencv/opencv) under the '/origin' and 'intent_tf_local', and set the paths in the codes.
+Download darknet codes from github repository, locate under the '/src/vintent'.
 
 ```
 git clone https://github.com/hx173149/C3D-tensorflow.git
 git clone https://github.com/deepmind/kinetics-i3d.git
+git clone https://github.com/AlexeyAB/darknet
 ```
 
 ### TRAIN the model

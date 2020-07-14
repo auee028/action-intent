@@ -1,6 +1,5 @@
 # CES_intent_demo
 
-
 ## Version info
 Python : 2.7.12, CUDA : 8.x, CuDNN : 5.1.10
 

@@ -47,3 +47,5 @@ bash deploy.sh
 ```
 nvidia-docker start vintent_container
 ``` 
+
+* dcf

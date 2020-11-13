@@ -76,7 +76,7 @@ stn==1.0.1
 subprocess32==3.2.7
 telegram==0.0.1
 tensorboard==1.6.0
-tensorflow-gpu==1.4.0rc1
+tensorflow-gpu==2.4.0rc1
 tensorflow-tensorboard==0.4.0
 termcolor==1.1.0
 tornado==5.1

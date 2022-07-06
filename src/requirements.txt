@@ -24,7 +24,7 @@ grpc-wrapper==0.4
 grpcio==1.10.0
 grpcio-tools==1.7.0
 h5py==2.7.1
-html5lib==0.9999999
+html5lib==0.999999999
 idna==2.6
 imageio==2.3.0
 ipdb==0.11
